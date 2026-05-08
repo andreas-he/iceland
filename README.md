@@ -2,7 +2,7 @@
 
 Shareable itinerary page for a two-person tent trek in the Hornstrandir Nature Reserve (Iceland Westfjords).
 
-**Live:** https://andreas-he.github.io/hornstrandir-2026/
+**Live:** https://andreas-he.github.io/iceland/
 
 Single self-contained `index.html` — Leaflet map with hand-placed waypoints, OpenTopoMap tiles, and toggle between two date brackets:
 
