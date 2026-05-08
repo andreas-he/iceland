@@ -11,12 +11,13 @@
     --bg: #faf8f3;
     --ink: #1c2120;
     --muted: #5d6664;
-    --accent: #b3402a;       /* primary route red */
+    --accent: #b3402a;
     --accent-soft: #d97a64;
-    --alt: #4a4f4d;          /* alt route gray */
+    --alt: #4a4f4d;
     --border: #d8d2c4;
     --card: #ffffff;
     --highlight: #f0e8d4;
+    --footer-h: 52px;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -26,9 +27,10 @@
     color: var(--ink);
     line-height: 1.55;
     font-size: 16px;
+    padding-bottom: var(--footer-h);
   }
   header {
-    padding: 32px 24px 20px;
+    padding: 28px 24px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--card);
   }
@@ -41,9 +43,15 @@
   }
   h1 .small { font-weight: 400; color: var(--muted); font-size: 18px; }
   .lede { color: var(--muted); margin: 0; font-size: 15px; }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    align-items: center;
+  }
   .toggle {
     display: inline-flex;
-    margin-top: 16px;
     border: 1px solid var(--border);
     border-radius: 6px;
     overflow: hidden;
@@ -52,7 +60,7 @@
   .toggle button {
     background: transparent;
     border: 0;
-    padding: 9px 16px;
+    padding: 9px 14px;
     cursor: pointer;
     font: inherit;
     color: var(--muted);
@@ -64,6 +72,7 @@
     background: var(--accent);
     color: white;
   }
+  .lang-toggle button { padding: 9px 12px; min-width: 40px; font-weight: 600; }
   main {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -72,13 +81,13 @@
     margin: 0 auto;
   }
   #map {
-    height: calc(100vh - 145px);
-    min-height: 480px;
+    height: calc(100vh - 155px - var(--footer-h));
+    min-height: 460px;
     position: sticky;
     top: 0;
     border-right: 1px solid var(--border);
   }
-  .panel { padding: 24px 28px 80px; }
+  .panel { padding: 24px 28px 40px; }
   h2 {
     font-size: 20px;
     margin: 28px 0 6px;
@@ -91,15 +100,8 @@
     padding: 8px 0 8px 14px;
     margin: 12px 0;
   }
-  .day .head {
-    font-weight: 600;
-    font-size: 15px;
-  }
-  .day .meta {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 2px;
-  }
+  .day .head { font-weight: 600; font-size: 15px; }
+  .day .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
   .day p { margin: 6px 0 0; font-size: 14px; }
   .badge {
     display: inline-block;
@@ -131,22 +133,63 @@
     border-radius: 3px;
   }
   .ferry strong { color: #2d4f70; }
-  .alt-only, .rec-only { display: none; }
+  .alt-only { display: none; }
   body[data-option="rec"] .rec-only { display: block; }
   body[data-option="alt"] .alt-only { display: block; }
-  .alt-only.day, .rec-only.day { display: none; }
-  body[data-option="rec"] .day.rec-only { display: block; }
-  body[data-option="alt"] .day.alt-only { display: block; }
+  body[data-option="rec"] .alt-only { display: none; }
+  body[data-option="alt"] .rec-only { display: none; }
   footer {
-    padding: 24px 28px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 13px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 0 18px;
+    color: var(--muted);
+    font-size: 12px;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    height: var(--footer-h);
+  }
+  footer .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
   }
   footer a { color: var(--accent); }
-  details { margin-top: 8px; }
-  summary { cursor: pointer; }
+  footer .src-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  footer .src-btn:hover { background: var(--highlight); }
+  .sources-popover {
+    display: none;
+    position: fixed;
+    right: 18px;
+    bottom: calc(var(--footer-h) + 8px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 14px 18px;
+    z-index: 600;
+    max-width: 460px;
+    font-size: 13px;
+  }
+  .sources-popover.open { display: block; }
+  .sources-popover ul { margin: 0; padding-left: 18px; }
+  .sources-popover li { margin-bottom: 4px; }
   .legend {
     background: white;
     padding: 8px 10px;
@@ -163,20 +206,30 @@
   }
   @media (max-width: 800px) {
     main { grid-template-columns: 1fr; }
-    #map { height: 50vh; min-height: 320px; position: relative; border-right: 0; border-bottom: 1px solid var(--border); }
+    #map { height: calc(50vh - var(--footer-h) / 2); min-height: 300px; position: relative; border-right: 0; border-bottom: 1px solid var(--border); }
     .grid2 { grid-template-columns: 1fr; }
+    footer .truncate-mobile { display: none; }
   }
 </style>
 </head>
-<body data-option="rec">
+<body data-option="rec" data-lang="en">
 
 <header>
   <div class="wrap">
-    <h1>Hornstrandir Trek <span class="small">— Iceland Westfjords, July 2026</span></h1>
-    <p class="lede">Two hikers · 9 days · tent camping at designated sites · point-to-point Veiðileysufjörður → Hesteyri</p>
-    <div class="toggle" role="tablist" aria-label="Itinerary option">
-      <button id="btn-rec" class="active" onclick="setOption('rec')">★ Option A — Sat 11.07 → Mon 20.07</button>
-      <button id="btn-alt" onclick="setOption('alt')">Option B — Sat 11.07 → Sun 19.07</button>
+    <h1>
+      <span data-de="Hornstrandir Trek">Hornstrandir Trek</span>
+      <span class="small" data-de="— Westfjorde Island, Juli 2026">— Iceland Westfjords, July 2026</span>
+    </h1>
+    <p class="lede" data-de="Zwei Wanderer · 9 Tage · Zelten an ausgewiesenen Plätzen · Punkt-zu-Punkt Veiðileysufjörður → Hesteyri">Two hikers · 9 days · tent camping at designated sites · point-to-point Veiðileysufjörður → Hesteyri</p>
+    <div class="controls">
+      <div class="toggle" role="tablist">
+        <button id="btn-rec" class="active" onclick="setOption('rec')" data-de="★ Option A — Sa 11.07 → Mo 20.07">★ Option A — Sat 11.07 → Mon 20.07</button>
+        <button id="btn-alt" onclick="setOption('alt')" data-de="Option B — Sa 11.07 → So 19.07">Option B — Sat 11.07 → Sun 19.07</button>
+      </div>
+      <div class="toggle lang-toggle">
+        <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-de" onclick="setLang('de')">DE</button>
+      </div>
     </div>
   </div>
 </header>
@@ -188,210 +241,184 @@
 
     <!-- ====== RECOMMENDED OPTION ====== -->
     <section class="rec-only">
-      <h2><span class="star">★</span> Option A — recommended</h2>
-      <p style="margin: 4px 0 12px; color: var(--muted); font-size: 14px;">
-        9 hiking days. Direct ferry both ways from Ísafjörður. Three pickup-time choices on the final day.
-      </p>
+      <h2><span class="star">★</span> <span data-de="Option A — empfohlen">Option A — recommended</span></h2>
+      <p style="margin: 4px 0 12px; color: var(--muted); font-size: 14px;" data-de="9 Wandertage. Direkte Fähre in beide Richtungen ab Ísafjörður. Drei Abholzeit-Optionen am letzten Tag.">9 hiking days. Direct ferry both ways from Ísafjörður. Three pickup-time choices on the final day.</p>
 
       <div class="ferry">
-        <strong>Drop-off:</strong> Sat 11 Jul · Sjóferðir 09:00 · Ísafjörður → Veiðileysufjörður<br>
-        <strong>Pickup:</strong> Mon 20 Jul · Borea 09:00 / 16:00 OR Sjóferðir 14:00 · Hesteyri → Ísafjörður
+        <strong data-de="Hinfahrt:">Drop-off:</strong> <span data-de="Sa 11. Juli · Sjóferðir 09:00 · Ísafjörður → Veiðileysufjörður">Sat 11 Jul · Sjóferðir 09:00 · Ísafjörður → Veiðileysufjörður</span><br>
+        <strong data-de="Rückfahrt:">Pickup:</strong> <span data-de="Mo 20. Juli · Borea 09:00 / 16:00 ODER Sjóferðir 14:00 · Hesteyri → Ísafjörður">Mon 20 Jul · Borea 09:00 / 16:00 OR Sjóferðir 14:00 · Hesteyri → Ísafjörður</span>
       </div>
 
-      <h3>Day-by-day</h3>
+      <h3 data-de="Tag für Tag">Day-by-day</h3>
 
       <div class="day">
-        <div class="head">Day 0 · Fri 10 Jul — Travel + Ísafjörður</div>
-        <div class="meta">Cologne → KEF → RKV → Ísafjörður · guesthouse</div>
-        <p>Buffer day for weather cancellations on the domestic flight. Visit Hornstrandastofa visitor centre (Silfurgata 1) for ranger conditions and pass snow status. Buy gas canisters at N1/Olís. Register travel plan at safetravel.is.</p>
-      </div>
-
-      <div class="day">
-        <div class="head">Day 1 · Sat 11 Jul — Veiðileysufjörður → Hornvík</div>
-        <div class="meta"><span class="badge">11 km</span><span class="badge">5–7 h</span><span class="badge">Hafnarskarð ~400 m</span></div>
-        <p>Sjóferðir 09:00 ferry to Veiðileysu. Cross Hafnarskarð (steep snow chute on north side mid-July). Camp at Hornvík (Höfn) — flush toilets, ranger station.</p>
+        <div class="head" data-de="Tag 0 · Fr 10. Juli — Anreise + Ísafjörður">Day 0 · Fri 10 Jul — Travel + Ísafjörður</div>
+        <div class="meta" data-de="Köln → KEF → RKV → Ísafjörður · Gästehaus">Cologne → KEF → RKV → Ísafjörður · guesthouse</div>
+        <p data-de="Pufferzeit für wetterbedingte Flugausfälle. Besuch im Hornstrandastofa-Besucherzentrum (Silfurgata 1) für Ranger-Hinweise zum Schneestand auf den Pässen. Gaskartuschen bei N1/Olís. Tour bei safetravel.is registrieren.">Buffer day for weather cancellations on the domestic flight. Visit Hornstrandastofa visitor centre (Silfurgata 1) for ranger conditions and pass snow status. Buy gas canisters at N1/Olís. Register travel plan at safetravel.is.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 2 · Sun 12 Jul — Hornbjarg cliff loop</div>
-        <div class="meta"><span class="badge">~16 km</span><span class="badge">6–7 h</span><span class="badge">Kálfatindar 534 m</span></div>
-        <p>Day-pack only. Puffins, gannets, fulmars on the dramatic edge. Camp Hornvík.</p>
+        <div class="head" data-de="Tag 1 · Sa 11. Juli — Veiðileysufjörður → Hornvík">Day 1 · Sat 11 Jul — Veiðileysufjörður → Hornvík</div>
+        <div class="meta"><span class="badge">11 km</span><span class="badge" data-de="5–7 Std">5–7 h</span><span class="badge">Hafnarskarð ~400 m</span></div>
+        <p data-de="Sjóferðir-Fähre 09:00 nach Veiðileysu. Über Hafnarskarð (steile Schneerinne auf der Nordseite Mitte Juli). Lager bei Hornvík (Höfn) — Wassertoiletten, Ranger-Station.">Sjóferðir 09:00 ferry to Veiðileysu. Cross Hafnarskarð (steep snow chute on north side mid-July). Camp at Hornvík (Höfn) — flush toilets, ranger station.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 3 · Mon 13 Jul — Hornvík → Hlöðuvík</div>
-        <div class="meta"><span class="badge">14–15 km</span><span class="badge">7–9 h</span><span class="badge">Atlaskarð + Skálarkambur</span></div>
-        <p>Two passes, two river fords, "the heart of Hornstrandir" view. Camp Við Hlöðuvíkurós (pyramid dry toilet).</p>
+        <div class="head" data-de="Tag 2 · So 12. Juli — Hornbjarg-Klippentour">Day 2 · Sun 12 Jul — Hornbjarg cliff loop</div>
+        <div class="meta"><span class="badge">~16 km</span><span class="badge" data-de="6–7 Std">6–7 h</span><span class="badge">Kálfatindar 534 m</span></div>
+        <p data-de="Nur Tagesrucksack. Papageitaucher, Tölpel, Eissturmvögel an der dramatischen Kante. Lager Hornvík.">Day-pack only. Puffins, gannets, fulmars on the dramatic edge. Camp Hornvík.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 4 · Tue 14 Jul — Rest at Hlöðuvík</div>
-        <div class="meta"><span class="badge">flex</span></div>
-        <p>Coastal walk, Arctic fox spotting, swim at the black-sand beach. Side push to Búðir farm if energy is high.</p>
+        <div class="head" data-de="Tag 3 · Mo 13. Juli — Hornvík → Hlöðuvík">Day 3 · Mon 13 Jul — Hornvík → Hlöðuvík</div>
+        <div class="meta"><span class="badge">14–15 km</span><span class="badge" data-de="7–9 Std">7–9 h</span><span class="badge">Atlaskarð + Skálarkambur</span></div>
+        <p data-de="Zwei Pässe, zwei Furten, „Herz von Hornstrandir“-Aussicht. Lager Við Hlöðuvíkurós (Pyramiden-Trockentoilette).">Two passes, two river fords, "the heart of Hornstrandir" view. Camp Við Hlöðuvíkurós (pyramid dry toilet).</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 5 · Wed 15 Jul — Hlöðuvík → Hesteyri</div>
-        <div class="meta"><span class="badge">14–15 km</span><span class="badge">6–8 h</span><span class="badge">Kjaransvíkurskarð 426 m</span></div>
-        <p>Ford Kjaransvíkurá at the shoreline; another snowfield on descent. Camp Hesteyri — toilets, sink, ranger.</p>
+        <div class="head" data-de="Tag 4 · Di 14. Juli — Ruhetag in Hlöðuvík">Day 4 · Tue 14 Jul — Rest at Hlöðuvík</div>
+        <div class="meta"><span class="badge" data-de="frei">flex</span></div>
+        <p data-de="Küstenwanderung, Polarfuchs-Spotting, Schwimmen am schwarzen Sandstrand. Optionaler Abstecher zur Búðir-Farm bei guter Verfassung.">Coastal walk, Arctic fox spotting, swim at the black-sand beach. Side push to Búðir farm if energy is high.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 6 · Thu 16 Jul — Hesteyri rest day</div>
+        <div class="head" data-de="Tag 5 · Mi 15. Juli — Hlöðuvík → Hesteyri">Day 5 · Wed 15 Jul — Hlöðuvík → Hesteyri</div>
+        <div class="meta"><span class="badge">14–15 km</span><span class="badge" data-de="6–8 Std">6–8 h</span><span class="badge">Kjaransvíkurskarð 426 m</span></div>
+        <p data-de="Furt durch Kjaransvíkurá am Strand; weiteres Schneefeld beim Abstieg. Lager Hesteyri — Toiletten, Wasserhahn, Ranger.">Ford Kjaransvíkurá at the shoreline; another snowfield on descent. Camp Hesteyri — toilets, sink, ranger.</p>
+      </div>
+
+      <div class="day">
+        <div class="head" data-de="Tag 6 · Do 16. Juli — Ruhetag in Hesteyri">Day 6 · Thu 16 Jul — Hesteyri rest day</div>
         <div class="meta"><span class="badge">0–6 km</span></div>
-        <p>Doctor's House (Læknishúsið) cafe — waffles, soup, coffee. Walk to Stakkadalur whaling station ruins.</p>
+        <p data-de="Doctor's House (Læknishúsið) Café — Waffeln, Suppe, Kaffee. Spaziergang zur Walfangstation Stakkadalur.">Doctor's House (Læknishúsið) cafe — waffles, soup, coffee. Walk to Stakkadalur whaling station ruins.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 7 · Fri 17 Jul — Side trip / weather buffer</div>
-        <div class="meta"><span class="badge">flex</span></div>
-        <p>Sléttuhlíð side trail. Built-in slack for ferry weather cancellations.</p>
+        <div class="head" data-de="Tag 7 · Fr 17. Juli — Tagestour / Wetterpuffer">Day 7 · Fri 17 Jul — Side trip / weather buffer</div>
+        <div class="meta"><span class="badge" data-de="frei">flex</span></div>
+        <p data-de="Sléttuhlíð-Pfad als Tagestour. Eingebauter Puffer für wetterbedingte Fährausfälle.">Sléttuhlíð side trail. Built-in slack for ferry weather cancellations.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 8 · Sat 18 Jul — Spare day</div>
-        <div class="meta"><span class="badge">flex</span></div>
-        <p>Exploration around Hesteyrarfjörður OR pre-position via Aðalvík.</p>
+        <div class="head" data-de="Tag 8 · Sa 18. Juli — Reservetag">Day 8 · Sat 18 Jul — Spare day</div>
+        <div class="meta"><span class="badge" data-de="frei">flex</span></div>
+        <p data-de="Erkundung um den Hesteyrarfjörður ODER Vorverlegung über Aðalvík.">Exploration around Hesteyrarfjörður OR pre-position via Aðalvík.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 9 · Sun 19 Jul — Final rest at Hesteyri</div>
-        <div class="meta"><span class="badge">camp</span></div>
-        <p>No Sunday ferry to Ísafjörður — sit tight, last camp.</p>
+        <div class="head" data-de="Tag 9 · So 19. Juli — Letzter Ruhetag in Hesteyri">Day 9 · Sun 19 Jul — Final rest at Hesteyri</div>
+        <div class="meta"><span class="badge" data-de="Camp">camp</span></div>
+        <p data-de="Keine Sonntagsfähre nach Ísafjörður — abwarten, letztes Lager.">No Sunday ferry to Ísafjörður — sit tight, last camp.</p>
       </div>
 
       <div class="day">
-        <div class="head">Day 10 · Mon 20 Jul — Ferry out</div>
+        <div class="head" data-de="Tag 10 · Mo 20. Juli — Rückfahrt">Day 10 · Mon 20 Jul — Ferry out</div>
         <div class="meta"><span class="badge">Borea / Sjóferðir</span></div>
-        <p>Pick from Borea 09:00 (earliest, fits same-day domestic flight), Borea 16:00, or Sjóferðir 14:00.</p>
+        <p data-de="Wahl zwischen Borea 09:00 (frühestens, passt für Inlandsflug am selben Tag), Borea 16:00 oder Sjóferðir 14:00.">Pick from Borea 09:00 (earliest, fits same-day domestic flight), Borea 16:00, or Sjóferðir 14:00.</p>
       </div>
     </section>
 
     <!-- ====== ALTERNATE OPTION ====== -->
     <section class="alt-only">
-      <h2>Option B — earlier finish</h2>
-      <p style="margin: 4px 0 12px; color: var(--muted); font-size: 14px;">
-        8 hiking days. Same trail, ends Sunday — but Sunday exit goes via Bolungarvík (no direct Hesteyri → Ísafjörður on weekends).
-      </p>
+      <h2 data-de="Option B — frühes Ende">Option B — earlier finish</h2>
+      <p style="margin: 4px 0 12px; color: var(--muted); font-size: 14px;" data-de="8 Wandertage. Gleicher Weg, Ende am Sonntag — aber Sonntag-Ausstieg führt über Bolungarvík (am Wochenende keine direkte Verbindung Hesteyri → Ísafjörður).">8 hiking days. Same trail, ends Sunday — but Sunday exit goes via Bolungarvík (no direct Hesteyri → Ísafjörður on weekends).</p>
 
       <div class="ferry">
-        <strong>Drop-off:</strong> Sat 11 Jul · Sjóferðir 09:00 · Ísafjörður → Veiðileysufjörður<br>
-        <strong>Pickup:</strong> Sun 19 Jul · HornstrandirTours · Hesteyri → Bolungarvík + ~20 min shuttle/taxi → Ísafjörður
+        <strong data-de="Hinfahrt:">Drop-off:</strong> <span data-de="Sa 11. Juli · Sjóferðir 09:00 · Ísafjörður → Veiðileysufjörður">Sat 11 Jul · Sjóferðir 09:00 · Ísafjörður → Veiðileysufjörður</span><br>
+        <strong data-de="Rückfahrt:">Pickup:</strong> <span data-de="So 19. Juli · HornstrandirTours · Hesteyri → Bolungarvík + ~20 Min Shuttle/Taxi → Ísafjörður">Sun 19 Jul · HornstrandirTours · Hesteyri → Bolungarvík + ~20 min shuttle/taxi → Ísafjörður</span>
       </div>
 
-      <h3>Day-by-day</h3>
+      <h3 data-de="Tag für Tag">Day-by-day</h3>
+
+      <div class="day"><div class="head" data-de="Tag 0 · Fr 10. Juli — Anreise + Ísafjörður">Day 0 · Fri 10 Jul — Travel + Ísafjörður</div><div class="meta" data-de="Wie Option A.">Same as Option A.</div></div>
+      <div class="day"><div class="head" data-de="Tag 1 · Sa 11. Juli — Veiðileysu → Hornvík">Day 1 · Sat 11 Jul — Veiðileysu → Hornvík</div><div class="meta"><span class="badge">11 km</span><span class="badge">Hafnarskarð</span></div></div>
+      <div class="day"><div class="head" data-de="Tag 2 · So 12. Juli — Hornbjarg-Klippentour">Day 2 · Sun 12 Jul — Hornbjarg cliff loop</div><div class="meta"><span class="badge">~16 km</span></div></div>
+      <div class="day"><div class="head" data-de="Tag 3 · Mo 13. Juli — Hornvík → Hlöðuvík">Day 3 · Mon 13 Jul — Hornvík → Hlöðuvík</div><div class="meta"><span class="badge">Atlaskarð + Skálarkambur</span></div></div>
+      <div class="day"><div class="head" data-de="Tag 4 · Di 14. Juli — Ruhetag in Hlöðuvík">Day 4 · Tue 14 Jul — Rest at Hlöðuvík</div></div>
+      <div class="day"><div class="head" data-de="Tag 5 · Mi 15. Juli — Hlöðuvík → Hesteyri">Day 5 · Wed 15 Jul — Hlöðuvík → Hesteyri</div><div class="meta"><span class="badge">Kjaransvíkurskarð</span></div></div>
+      <div class="day"><div class="head" data-de="Tag 6 · Do 16. Juli — Ruhetag in Hesteyri">Day 6 · Thu 16 Jul — Hesteyri rest</div></div>
+      <div class="day"><div class="head" data-de="Tag 7 · Fr 17. Juli — Sléttuhlíð / Wetterpuffer">Day 7 · Fri 17 Jul — Sléttuhlíð / weather buffer</div></div>
+      <div class="day"><div class="head" data-de="Tag 8 · Sa 18. Juli — Reservetag">Day 8 · Sat 18 Jul — Spare day</div></div>
 
       <div class="day">
-        <div class="head">Day 0 · Fri 10 Jul — Travel + Ísafjörður</div>
-        <div class="meta">Same as Option A.</div>
-      </div>
-      <div class="day">
-        <div class="head">Day 1 · Sat 11 Jul — Veiðileysu → Hornvík</div>
-        <div class="meta"><span class="badge">11 km</span><span class="badge">Hafnarskarð</span></div>
-      </div>
-      <div class="day">
-        <div class="head">Day 2 · Sun 12 Jul — Hornbjarg cliff loop</div>
-        <div class="meta"><span class="badge">~16 km</span></div>
-      </div>
-      <div class="day">
-        <div class="head">Day 3 · Mon 13 Jul — Hornvík → Hlöðuvík</div>
-        <div class="meta"><span class="badge">Atlaskarð + Skálarkambur</span></div>
-      </div>
-      <div class="day">
-        <div class="head">Day 4 · Tue 14 Jul — Rest at Hlöðuvík</div>
-      </div>
-      <div class="day">
-        <div class="head">Day 5 · Wed 15 Jul — Hlöðuvík → Hesteyri</div>
-        <div class="meta"><span class="badge">Kjaransvíkurskarð</span></div>
-      </div>
-      <div class="day">
-        <div class="head">Day 6 · Thu 16 Jul — Hesteyri rest</div>
-      </div>
-      <div class="day">
-        <div class="head">Day 7 · Fri 17 Jul — Sléttuhlíð / weather buffer</div>
-      </div>
-      <div class="day">
-        <div class="head">Day 8 · Sat 18 Jul — Spare day</div>
-      </div>
-      <div class="day">
-        <div class="head">Day 9 · Sun 19 Jul — Ferry out via Bolungarvík</div>
+        <div class="head" data-de="Tag 9 · So 19. Juli — Rückfahrt über Bolungarvík">Day 9 · Sun 19 Jul — Ferry out via Bolungarvík</div>
         <div class="meta"><span class="badge">HornstrandirTours</span></div>
-        <p>Boat leaves Bolungarvík 09:00 to Hesteyri, returns mid-morning. Confirm exact return time when booking. Then ~20 min shuttle/taxi from Bolungarvík to Ísafjörður (~15 km, paved tunnel road).</p>
+        <p data-de="Boot fährt 09:00 ab Bolungarvík nach Hesteyri, kehrt am Vormittag zurück. Genaue Rückfahrtzeit bei Buchung erfragen. Anschließend ~20 Min Shuttle/Taxi von Bolungarvík nach Ísafjörður (~15 km, asphaltierter Tunnelweg).">Boat leaves Bolungarvík 09:00 to Hesteyri, returns mid-morning. Confirm exact return time when booking. Then ~20 min shuttle/taxi from Bolungarvík to Ísafjörður (~15 km, paved tunnel road).</p>
       </div>
 
       <p style="font-size:13px; color: var(--muted); margin-top: 18px;">
-        <strong>Why this is the runner-up:</strong> Option A finishes Monday with a clean direct ferry back to Ísafjörður. Option B forces a Sunday Bolungarvík transfer — workable, but two operators and an extra leg.
+        <strong data-de="Warum die zweite Wahl:">Why this is the runner-up:</strong> <span data-de="Option A endet am Montag mit einer direkten Fähre zurück nach Ísafjörður. Option B erzwingt einen Sonntags-Transfer über Bolungarvík — machbar, aber zwei Anbieter und ein zusätzliches Bein.">Option A finishes Monday with a clean direct ferry back to Ísafjörður. Option B forces a Sunday Bolungarvík transfer — workable, but two operators and an extra leg.</span>
       </p>
     </section>
 
     <!-- ====== SHARED LOGISTICS ====== -->
-    <h2>Logistics</h2>
+    <h2 data-de="Logistik">Logistics</h2>
 
     <div class="grid2">
       <div class="card">
-        <h4>Booking now</h4>
+        <h4 data-de="Jetzt buchen">Booking now</h4>
         <ul>
-          <li>Sjóferðir Ísafjörður→Veiðileysu Sat 09:00 — book@sjoferdir.is or westtours.is</li>
-          <li>Borea Hesteyri→Ísafjörður Mon 09:00 — info@borea.is · +354 456 3322</li>
-          <li>~14,900 ISK / leg / person ≈ €100</li>
-          <li>Camp sites are <strong>free, no booking</strong> (Environment Agency)</li>
-          <li>Book 2 months ahead — peak July fills fast</li>
+          <li data-de="Sjóferðir Ísafjörður→Veiðileysu Sa 09:00 — book@sjoferdir.is oder westtours.is">Sjóferðir Ísafjörður→Veiðileysu Sat 09:00 — book@sjoferdir.is or westtours.is</li>
+          <li data-de="Borea Hesteyri→Ísafjörður Mo 09:00 — info@borea.is · +354 456 3322">Borea Hesteyri→Ísafjörður Mon 09:00 — info@borea.is · +354 456 3322</li>
+          <li data-de="~14.900 ISK / Strecke / Person ≈ €100">~14,900 ISK / leg / person ≈ €100</li>
+          <li data-de="Zeltplätze sind kostenlos, keine Buchung nötig (Umweltagentur)">Camp sites are free, no booking (Environment Agency)</li>
+          <li data-de="2 Monate vorher buchen — Hochsaison Juli ist schnell ausgebucht">Book 2 months ahead — peak July fills fast</li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Travel to Ísafjörður</h4>
+        <h4 data-de="Anreise nach Ísafjörður">Travel to Ísafjörður</h4>
         <ul>
-          <li>Cologne → KEF → RKV (Reykjavík city) → Ísafjörður</li>
-          <li>Domestic flight = ~40 min, frequent weather cancellations</li>
-          <li>Bus alternative ~6 h via Strætó</li>
-          <li>Build buffer day on front end</li>
+          <li data-de="Köln → KEF → RKV (Reykjavík Stadt) → Ísafjörður">Cologne → KEF → RKV (Reykjavík city) → Ísafjörður</li>
+          <li data-de="Inlandsflug ~40 Min, häufige Wetterausfälle">Domestic flight ~40 min, frequent weather cancellations</li>
+          <li data-de="Bus-Alternative ~6 Std über Strætó">Bus alternative ~6 h via Strætó</li>
+          <li data-de="Pufferung: Tag im Voraus einplanen">Build buffer day on front end</li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Pack list (subarctic, July)</h4>
+        <h4 data-de="Packliste (subarktisch, Juli)">Pack list (subarctic, July)</h4>
         <ul>
-          <li>4-season tent (wind, not cold, is the killer)</li>
-          <li>0 °C-rated bag · Goretex shell · insulated layer</li>
-          <li>Trekking poles · knee-high gaiters</li>
-          <li>Microspikes (mid-July snow on passes)</li>
-          <li>River-crossing footwear (neoprene + crocs)</li>
-          <li>Garmin inReach Mini — strongly recommended</li>
-          <li>Vestfirðir 1:100,000 hiking map (Ferðakort)</li>
+          <li data-de="4-Jahreszeiten-Zelt (Wind ist gefährlicher als Kälte)">4-season tent (wind, not cold, is the killer)</li>
+          <li data-de="Schlafsack 0 °C · Goretex-Schale · Isolationsschicht">0 °C-rated bag · Goretex shell · insulated layer</li>
+          <li data-de="Trekkingstöcke · kniehohe Gamaschen">Trekking poles · knee-high gaiters</li>
+          <li data-de="Microspikes (Mitte Juli noch Schnee an den Pässen)">Microspikes (mid-July snow on passes)</li>
+          <li data-de="Furtschuhe (Neopren + Crocs)">River-crossing footwear (neoprene + crocs)</li>
+          <li data-de="Garmin inReach Mini — dringend empfohlen">Garmin inReach Mini — strongly recommended</li>
+          <li data-de="Vestfirðir 1:100.000 Wanderkarte (Ferðakort)">Vestfirðir 1:100,000 hiking map (Ferðakort)</li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Food &amp; fuel</h4>
+        <h4 data-de="Verpflegung &amp; Brennstoff">Food &amp; fuel</h4>
         <ul>
-          <li>7 days food, ~3,500–4,000 kcal/day</li>
-          <li>Gas canisters can't fly — buy in Ísafjörður (N1/Olís) or Reykjavík</li>
-          <li>~3 × 230 g screw-on canisters for two</li>
-          <li>Doctor's House at Hesteyri sells coffee/waffles/soup</li>
+          <li data-de="7 Tage Verpflegung, ~3.500–4.000 kcal/Tag">7 days food, ~3,500–4,000 kcal/day</li>
+          <li data-de="Gaskartuschen dürfen nicht ins Flugzeug — in Ísafjörður (N1/Olís) oder Reykjavík kaufen">Gas canisters can't fly — buy in Ísafjörður (N1/Olís) or Reykjavík</li>
+          <li data-de="~3 × 230 g Schraubkartuschen für zwei Personen">~3 × 230 g screw-on canisters for two</li>
+          <li data-de="Doctor's House in Hesteyri verkauft Kaffee/Waffeln/Suppe">Doctor's House at Hesteyri sells coffee/waffles/soup</li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Permits &amp; rules</h4>
+        <h4 data-de="Genehmigungen &amp; Regeln">Permits &amp; rules</h4>
         <ul>
-          <li>No permit needed for July visits</li>
-          <li>Camp <strong>only</strong> at designated sites (max 1 week each)</li>
-          <li>Drones: forbidden without Environment Agency permit</li>
-          <li>Campfires: forbidden everywhere</li>
-          <li>Stay 40 m from arctic fox / nesting birds</li>
-          <li>Travel-plan registration at safetravel.is recommended</li>
+          <li data-de="Keine Genehmigung für Juli-Besuche nötig">No permit needed for July visits</li>
+          <li data-de="Zelten nur an ausgewiesenen Plätzen (max. 1 Woche pro Platz)">Camp only at designated sites (max 1 week each)</li>
+          <li data-de="Drohnen: ohne Genehmigung der Umweltagentur verboten">Drones: forbidden without Environment Agency permit</li>
+          <li data-de="Lagerfeuer: überall verboten">Campfires: forbidden everywhere</li>
+          <li data-de="40 m Abstand zu Polarfüchsen / Brutvögeln einhalten">Stay 40 m from arctic fox / nesting birds</li>
+          <li data-de="Tour-Registrierung bei safetravel.is empfohlen">Travel-plan registration at safetravel.is recommended</li>
         </ul>
       </div>
 
       <div class="card">
-        <h4>Weather &amp; bail-outs</h4>
+        <h4 data-de="Wetter &amp; Notausstiege">Weather &amp; bail-outs</h4>
         <ul>
-          <li>Vedur.is is the authoritative forecast</li>
-          <li>If pass visibility &lt;100 m → wait at base camp</li>
-          <li>Hornbjargsviti lighthouse hut (paid bunks late Jun–Aug)</li>
-          <li>Hesteyri Doctor's House (paid bunks)</li>
-          <li>Borea + Sjóferðir run Hesteyri Mon–Fri — usually &lt;48 h delay</li>
+          <li data-de="Vedur.is ist die maßgebliche Vorhersage">Vedur.is is the authoritative forecast</li>
+          <li data-de="Sicht am Pass &lt;100 m → im Lager warten">If pass visibility &lt;100 m → wait at base camp</li>
+          <li data-de="Hornbjargsviti Leuchtturmhütte (Bett zahlbar Ende Juni–Aug)">Hornbjargsviti lighthouse hut (paid bunks late Jun–Aug)</li>
+          <li data-de="Hesteyri Doctor's House (zahlbare Betten)">Hesteyri Doctor's House (paid bunks)</li>
+          <li data-de="Borea + Sjóferðir fahren Hesteyri Mo–Fr — meist &lt;48 Std Verzögerung">Borea + Sjóferðir run Hesteyri Mon–Fri — usually &lt;48 h delay</li>
         </ul>
       </div>
     </div>
@@ -399,28 +426,28 @@
   </div>
 </main>
 
+<div class="sources-popover" id="sources-popover">
+  <strong data-de="Quellen">Sources</strong>
+  <ul style="margin-top:8px;">
+    <li><a href="https://westtours.is/ferry-schedules-2024/" target="_blank" rel="noopener">West Tours <span data-de="Fährfahrpläne 2026">ferry schedules 2026</span></a></li>
+    <li><a href="https://boreaadventures.com/schedule-destinations/" target="_blank" rel="noopener">Borea Adventures <span data-de="Fahrplan + Preise">schedule + pricing</span></a></li>
+    <li><a href="https://ust.is/english/visiting-iceland/protected-areas/westfjords/hornstrandir/useful-information/" target="_blank" rel="noopener">Umhverfisstofnun — <span data-de="offizielle Regeln">official rules</span></a></li>
+    <li><a href="https://epiciceland.net/hornstrandir-guide/" target="_blank" rel="noopener">Epic Iceland Hornstrandir <span data-de="Reiseführer">guide</span></a></li>
+    <li><a href="https://lisagermany.com/hiking-iceland-veidileysufjordur-hornvik-hornstrandir/" target="_blank" rel="noopener">Lisa Germany <span data-de="Tourberichte (pro Etappe)">trip reports (per-segment)</span></a></li>
+    <li><a href="https://www.iceland.org/hiking/hornstrandir" target="_blank" rel="noopener">Iceland.org Hornstrandir <span data-de="Übersicht">overview</span></a></li>
+  </ul>
+</div>
+
 <footer>
   <div class="wrap">
-    <strong>Map note:</strong> route lines are schematic — for actual navigation use the Vestfirðir 1:100,000 hiking map (Ferðakort or Mál og Menning) plus a GPS/inReach with offline tiles. Pass coordinates are approximate.<br>
-    <details>
-      <summary>Sources</summary>
-      <ul style="margin-top:8px;">
-        <li><a href="https://westtours.is/ferry-schedules-2024/">West Tours ferry schedules 2026</a></li>
-        <li><a href="https://boreaadventures.com/schedule-destinations/">Borea Adventures schedule + pricing</a></li>
-        <li><a href="https://ust.is/english/visiting-iceland/protected-areas/westfjords/hornstrandir/useful-information/">Umhverfisstofnun (Environment Agency) — official rules</a></li>
-        <li><a href="https://epiciceland.net/hornstrandir-guide/">Epic Iceland Hornstrandir guide</a></li>
-        <li><a href="https://lisagermany.com/hiking-iceland-veidileysufjordur-hornvik-hornstrandir/">Lisa Germany trip reports (per-segment)</a></li>
-        <li><a href="https://www.iceland.org/hiking/hornstrandir">Iceland.org Hornstrandir overview</a></li>
-      </ul>
-    </details>
-    <p style="margin-top: 14px; font-size: 12px;">Last updated 2026-05-08 · Map © OpenStreetMap contributors, tiles by <a href="https://opentopomap.org/">OpenTopoMap</a> (CC-BY-SA)</p>
+    <span><span class="truncate-mobile" data-de="Karte schematisch · ">Map schematic · </span>© <a href="https://openstreetmap.org/" target="_blank" rel="noopener">OSM</a> · <a href="https://opentopomap.org/" target="_blank" rel="noopener">OpenTopoMap</a> · <span data-de="Stand 2026-05-08">updated 2026-05-08</span></span>
+    <button class="src-btn" onclick="toggleSources()" data-de="Quellen ▾">Sources ▾</button>
   </div>
 </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-  // Coordinates: hand-placed from operator/hiker sources. Approximate — fine for a schematic, not for nav.
   const POINTS = {
     isafjordur:   { name: "Ísafjörður",            ll: [66.0744, -23.1267], type: "port" },
     bolungarvik:  { name: "Bolungarvík",           ll: [66.1517, -23.2528], type: "port" },
@@ -436,20 +463,12 @@
     skalarkambur:   { name: "Skálarkambur (~350 m)",      ll: [66.4200, -22.6200] },
     kjaransvik:     { name: "Kjaransvíkurskarð (426 m)",  ll: [66.3800, -22.7800] },
   };
-
   const TREK_LINE = [
-    POINTS.veidileysu.ll,
-    PASSES.hafnarskard.ll,
-    POINTS.hornvik.ll,
-    POINTS.hornbjarg.ll,
-    POINTS.hornvik.ll,
-    PASSES.atlaskard.ll,
-    PASSES.skalarkambur.ll,
-    POINTS.hloduvik.ll,
-    PASSES.kjaransvik.ll,
-    POINTS.hesteyri.ll,
+    POINTS.veidileysu.ll, PASSES.hafnarskard.ll, POINTS.hornvik.ll,
+    POINTS.hornbjarg.ll, POINTS.hornvik.ll,
+    PASSES.atlaskard.ll, PASSES.skalarkambur.ll, POINTS.hloduvik.ll,
+    PASSES.kjaransvik.ll, POINTS.hesteyri.ll,
   ];
-
   const FERRY_REC = [
     [POINTS.isafjordur.ll, POINTS.veidileysu.ll],
     [POINTS.hesteyri.ll, POINTS.isafjordur.ll],
@@ -466,10 +485,9 @@
     attribution: '© <a href="https://opentopomap.org/">OpenTopoMap</a> · © <a href="https://openstreetmap.org/">OSM</a>',
   }).addTo(map);
 
-  const trekLine = L.polyline(TREK_LINE, { color: '#b3402a', weight: 4, opacity: 0.92 }).addTo(map);
+  L.polyline(TREK_LINE, { color: '#b3402a', weight: 4, opacity: 0.92 }).addTo(map);
 
   let ferryLayer = L.layerGroup().addTo(map);
-
   function drawFerries(option) {
     ferryLayer.clearLayers();
     const set = option === 'alt' ? FERRY_ALT : FERRY_REC;
@@ -478,7 +496,6 @@
     });
   }
 
-  // Markers
   const dotIcon = (color, size = 11) => L.divIcon({
     className: 'dot',
     html: `<div style="width:${size}px;height:${size}px;background:${color};border:2px solid white;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>`,
@@ -489,7 +506,6 @@
     html: `<div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid #5a3e1d;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.4));"></div>`,
     iconSize: [12, 11], iconAnchor: [6, 11],
   });
-
   Object.values(POINTS).forEach(p => {
     let color = '#b3402a';
     if (p.type === 'port') color = '#1f3a5f';
@@ -498,37 +514,41 @@
     else if (p.type === 'camp-major') color = '#b3402a';
     else if (p.type === 'camp') color = '#d97a64';
     L.marker(p.ll, { icon: dotIcon(color, p.type.includes('major') || p.type === 'port' ? 13 : 10) })
-      .addTo(map)
-      .bindPopup(`<strong>${p.name}</strong>`);
+      .addTo(map).bindPopup(`<strong>${p.name}</strong>`);
   });
   Object.values(PASSES).forEach(p => {
     L.marker(p.ll, { icon: triIcon() }).addTo(map).bindPopup(`<strong>${p.name}</strong>`);
   });
 
-  // Legend
   const Legend = L.control({ position: 'bottomright' });
   Legend.onAdd = () => {
     const div = L.DomUtil.create('div', 'legend');
-    div.innerHTML =
-      `<div><span class="swatch" style="background:#b3402a"></span>Hiking route</div>` +
-      `<div><span class="swatch" style="background:#4a7eaa;border-top:1px dashed #4a7eaa"></span>Ferry</div>` +
-      `<div><span class="swatch" style="background:#1f3a5f;border-radius:50%;width:8px;height:8px"></span>Port</div>` +
-      `<div><span class="swatch" style="background:#b3402a;border-radius:50%;width:8px;height:8px"></span>Major campsite</div>` +
-      `<div>▲ Mountain pass</div>`;
+    div.id = 'legend-box';
+    renderLegend(div);
     return div;
   };
   Legend.addTo(map);
 
-  // Fit bounds with padding
+  function renderLegend(div) {
+    if (!div) div = document.getElementById('legend-box');
+    if (!div) return;
+    const lang = document.body.dataset.lang;
+    const t = lang === 'de'
+      ? { route: 'Wanderroute', ferry: 'Fähre', port: 'Hafen', camp: 'Hauptzeltplatz', pass: 'Bergpass' }
+      : { route: 'Hiking route', ferry: 'Ferry', port: 'Port', camp: 'Major campsite', pass: 'Mountain pass' };
+    div.innerHTML =
+      `<div><span class="swatch" style="background:#b3402a"></span>${t.route}</div>` +
+      `<div><span class="swatch" style="background:#4a7eaa"></span>${t.ferry}</div>` +
+      `<div><span class="swatch" style="background:#1f3a5f;border-radius:50%;width:8px;height:8px"></span>${t.port}</div>` +
+      `<div><span class="swatch" style="background:#b3402a;border-radius:50%;width:8px;height:8px"></span>${t.camp}</div>` +
+      `<div>▲ ${t.pass}</div>`;
+  }
+
   const bounds = L.latLngBounds([
-    POINTS.isafjordur.ll,
-    POINTS.hornbjarg.ll,
-    POINTS.hesteyri.ll,
-    POINTS.veidileysu.ll,
+    POINTS.isafjordur.ll, POINTS.hornbjarg.ll, POINTS.hesteyri.ll, POINTS.veidileysu.ll,
   ]);
   map.fitBounds(bounds, { padding: [30, 30] });
 
-  // Toggle handler
   function setOption(opt) {
     document.body.dataset.option = opt;
     document.getElementById('btn-rec').classList.toggle('active', opt === 'rec');
@@ -537,6 +557,29 @@
     setTimeout(() => map.invalidateSize(), 50);
   }
   drawFerries('rec');
+
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    document.body.dataset.lang = lang;
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-de').classList.toggle('active', lang === 'de');
+    document.querySelectorAll('[data-de]').forEach(el => {
+      if (el.dataset.en === undefined) el.dataset.en = el.textContent;
+      el.textContent = lang === 'de' ? el.dataset.de : el.dataset.en;
+    });
+    renderLegend();
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+
+  function toggleSources() {
+    document.getElementById('sources-popover').classList.toggle('open');
+  }
+  document.addEventListener('click', e => {
+    const pop = document.getElementById('sources-popover');
+    if (!pop.classList.contains('open')) return;
+    if (e.target.closest('.src-btn') || e.target.closest('#sources-popover')) return;
+    pop.classList.remove('open');
+  });
 </script>
 
 </body>
